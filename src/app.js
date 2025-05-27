@@ -9,10 +9,10 @@ import mocksRouter from './routes/mocks.router.js';
 import { connDB } from './config/config.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { logger } from './utils/utils.js'
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import mainRouter from './routes/main.routers.js'
 
-dotenv.config({ path: './src/.env' })
+// dotenv.config({ path: './src/.env' })
 
 const app = express();
 const PORT = process.env.PORT;

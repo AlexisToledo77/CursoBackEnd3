@@ -1,22 +1,22 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import winston from "winston"
+import winston from "winston";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export default __dirname;
 
 process.loadEnvFile("./src/.env")
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-export default __dirname
-
 const customLevels = {
     levels: {
-        debug: 0,
-        http: 1,
-        info: 2,
-        warning: 3,
-        error: 4,
-        fatal: 5
+        debug: 5,
+        http: 4,
+        info: 3,
+        warning: 2,
+        error: 1,
+        fatal: 0
     },
     colors: {
         debug: 'blue',
@@ -26,17 +26,17 @@ const customLevels = {
         error: 'red',
         fatal: 'redBG'
     }
-}
-winston.addColors(customLevels.colors)
+};
+winston.addColors(customLevels.colors);
 
-const transporteConsola = new winston.transports.Console({
+const transporteConsolaDev = new winston.transports.Console({
     level: "debug",
     format: winston.format.combine(
         winston.format.colorize(),
         winston.format.timestamp(),
         winston.format.simple()
     )
-})
+});
 
 const transporteConsolaProd = new winston.transports.Console({
     level: "info",
@@ -45,34 +45,23 @@ const transporteConsolaProd = new winston.transports.Console({
         winston.format.timestamp(),
         winston.format.simple()
     )
-})
+});
 
 const transporteArchivo = new winston.transports.File({
-    level: "warn",
-    filename: "./src/logs/error.log",
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-    )
-})
-
-const transporteError = new winston.transports.File({
     level: "error",
-    filename: "./src/logs/errors.log",
+    filename: "./src/logs/error.log",
     format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json()
     )
 });
 
-
-
 let transports = []
-if (process.env.MODE == "dev") {
-    transports.push(transporteConsola)
+if (process.env.MODE === "dev") {
+    transports.push(transporteConsolaDev)
 } else {
     transports.push(transporteConsolaProd)
-    transports.push(transporteError)
+    transports.push(transporteArchivo)
 }
 
 export const logger = winston.createLogger({

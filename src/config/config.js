@@ -1,22 +1,14 @@
 import dotenv from 'dotenv'
-import { Command, Option } from 'commander'
 import mongoose from 'mongoose'
-import { logger } from '../utils/utils.js'
+import { logger } from '../utils/testwinst.js'
+dotenv.config({ path: './src/.env' })
 
 mongoose.set('strictQuery', false)
-
-const program = new Command()
-
-program.addOption(new Option("-m, --mode <MODE>", "Modo de ejecucion del server").choices(["dev", "prod"]).default("dev"))
-
-program.parse()
-const { mode } = program.opts()
-
-dotenv.config({ path: mode === "dev" ? "./src/.env" : "./src/.env.prod" })
 
 export const config = {
     PORT: process.env.PORT,
     SECRET: process.env.SECRET,
+    MODE: process.env.MODE
 }
 
 export const connDB = async () => {
@@ -27,11 +19,11 @@ export const connDB = async () => {
                 dbName: process.env.DB_NAME,
             }
         )
-        logger.info("DB contectada...")
+        
+        logger.info("DB conectada...")
     } catch (error) {
-        logger.warn(`Error al conectar a DB: ${error}`)
+        logger.error(`Error al conectar a DB: ${error}`)
     }
 }
 
 export default config
-
